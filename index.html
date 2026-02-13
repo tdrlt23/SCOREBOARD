@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Scoreboard PRO</title>
+<title>Scoreboard PRO MAX</title>
 
 <style>
 body{
@@ -21,16 +21,30 @@ body{
   padding:15px;
 }
 
-button{
-  margin:6px;
-  padding:12px 18px;
-  font-size:18px;
+.timer{
+  font-size:34px;
   font-weight:bold;
+}
+
+.status{
+  margin-top:5px;
+}
+
+button{
+  margin:8px;
+  padding:14px 22px;
+  font-weight:bold;
+  font-size:20px;
   border:none;
   border-radius:10px;
   cursor:pointer;
   background:linear-gradient(45deg,#ffcc00,#ff9900);
   color:black;
+  box-shadow:0 4px 12px rgba(0,0,0,0.4);
+}
+
+button:hover{
+  transform:scale(1.05);
 }
 
 .main{
@@ -45,7 +59,7 @@ button{
 }
 
 .team-name{
-  font-size:30px;
+  font-size:28px;
   font-weight:bold;
 }
 
@@ -54,14 +68,22 @@ button{
   font-weight:900;
 }
 
-.cards{
-  font-size:28px;
-}
-
 .scorers{
   margin-top:10px;
-  min-height:120px;
+  font-size:16px;
   text-align:left;
+  min-height:100px;
+}
+
+.cards {
+  margin-top:8px;
+  font-size:26px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cards span {
+  font-size:28px;
+  color:white;
 }
 
 .center{
@@ -70,7 +92,7 @@ button{
 }
 
 .global-score{
-  font-size:110px;
+  font-size:100px;
   font-weight:900;
 }
 
@@ -87,12 +109,15 @@ button{
   font-weight:900;
   opacity:0;
   pointer-events:none;
-  transition:0.3s;
+  transition:0.4s;
   text-align:center;
 }
 
 .goal{background:radial-gradient(circle,red,darkred);}
-.half{background:black;}
+.penalty{background:radial-gradient(circle,gold,orange);}
+.miss{background:black;}
+.red{background:darkred;}
+.var{background:black;}
 .end{background:black;}
 </style>
 </head>
@@ -100,177 +125,223 @@ button{
 <body>
 
 <div class="topbar">
-⏱ <span id="timeDisplay">00:00</span><br>
-Durée mi-temps :
-<input type="number" id="halfDuration" value="45" style="width:60px">
-<br>
-<button onclick="startTimer()">START</button>
-<button onclick="pauseTimer()">PAUSE</button>
-<button onclick="resetAll()">RESET</button>
+  ⏱ <span id="timeDisplay">00:00</span>
+  <div class="status" id="status">Avant Match</div>
+  <br>
+  Durée mi-temps (minutes) :
+  <input type="number" id="halfDuration" value="45" style="width:60px">
+  <br>
+  <button onclick="startTimer()">Start</button>
+  <button onclick="pauseTimer()">Pause</button>
+  <button onclick="resetAll()">RESET TOTAL</button>
 </div>
 
 <div class="main">
 
-<div class="team">
-<div class="team-name">Theo</div>
-<div class="team-score" id="scoreA">0</div>
-<div class="cards">🟨 <span id="yellowA">0</span> | 🟥 <span id="redA">0</span></div>
-<div class="scorers" id="scorersA"></div>
-<button onclick="addGoal('A')">+ BUT</button>
-<button onclick="addYellow('A')">+ JAUNE</button>
-<button onclick="addRed('A')">+ ROUGE</button>
+  <div class="team">
+    <div class="team-name" contenteditable="true">ÉQUIPE DOMICILE</div>
+    <div class="team-score" id="scoreA">0</div>
+    <div class="cards">
+      <span style="color: yellow;">🟨</span> <span id="yellowA">0</span> |
+      <span style="color: red;">🟥</span> <span id="redA">0</span>
+    </div>
+    <div class="scorers" id="scorersA"></div>
+    <button onclick="addGoal('A')">+ But</button>
+    <button onclick="addPenalty('A')">+ Penalty</button>
+    <button onclick="addYellow('A')">+ Jaune</button>
+    <button onclick="addRed('A')">+ Rouge</button>
+  </div>
+
+  <div class="center">
+    <div class="global-score">
+      <span id="gA">0</span> - <span id="gB">0</span>
+    </div>
+  </div>
+
+  <div class="team">
+    <div class="team-name" contenteditable="true">ÉQUIPE VISITEUR</div>
+    <div class="team-score" id="scoreB">0</div>
+    <div class="cards">
+      <span style="color: yellow;">🟨</span> <span id="yellowB">0</span> |
+      <span style="color: red;">🟥</span> <span id="redB">0</span>
+    </div>
+    <div class="scorers" id="scorersB"></div>
+    <button onclick="addGoal('B')">+ But</button>
+    <button onclick="addPenalty('B')">+ Penalty</button>
+    <button onclick="addYellow('B')">+ Jaune</button>
+    <button onclick="addRed('B')">+ Rouge</button>
+  </div>
+
 </div>
 
-<div class="center">
-<div class="global-score">
-<span id="gA">0</span> - <span id="gB">0</span>
-</div>
-</div>
-
-<div class="team">
-<div class="team-name">Tom</div>
-<div class="team-score" id="scoreB">0</div>
-<div class="cards">🟨 <span id="yellowB">0</span> | 🟥 <span id="redB">0</span></div>
-<div class="scorers" id="scorersB"></div>
-<button onclick="addGoal('B')">+ BUT</button>
-<button onclick="addYellow('B')">+ JAUNE</button>
-<button onclick="addRed('B')">+ ROUGE</button>
-</div>
-
-</div>
-
+<!-- OVERLAYS -->
 <div class="overlay goal" id="goalOverlay"></div>
-<div class="overlay half" id="halfOverlay">MI-TEMPS<br><small>Touchez l'écran</small></div>
-<div class="overlay end" id="endOverlay">FIN DU MATCH<br><small>Touchez l'écran</small></div>
+<div class="overlay penalty" id="penaltyOverlay">PENALTY ⚽</div>
+<div class="overlay miss" id="missOverlay"></div>
+<div class="overlay red" id="redOverlay">CARTON ROUGE 🟥</div>
+<div class="overlay var" id="varOverlay">VAR EN COURS...</div>
+<div class="overlay var" id="halfOverlay">MI-TEMPS</div>
+<div class="overlay end" id="endOverlay">FIN DU MATCH</div>
 
-<audio id="whistle" src="https://actions.google.com/sounds/v1/sports/referee_whistle.ogg"></audio>
+<!-- Son uniquement sifflets -->
+<audio id="whistleSound" src="https://actions.google.com/sounds/v1/sports/referee_whistle.ogg"></audio>
 
 <script>
 
-let scoreA=0, scoreB=0;
-let yellowA=0, yellowB=0;
-let redA=0, redB=0;
+let scoreA=0,scoreB=0;
+let yellowA=0,yellowB=0;
+let redA=0,redB=0;
 let seconds=0;
 let timer=null;
-let halfDuration=45;
+let halfTimeDuration=45;
 let period=1;
-let pausedForHalf=false;
 
 function update(){
-document.getElementById("scoreA").textContent=scoreA;
-document.getElementById("scoreB").textContent=scoreB;
-document.getElementById("gA").textContent=scoreA;
-document.getElementById("gB").textContent=scoreB;
-document.getElementById("yellowA").textContent=yellowA;
-document.getElementById("yellowB").textContent=yellowB;
-document.getElementById("redA").textContent=redA;
-document.getElementById("redB").textContent=redB;
+  document.getElementById("scoreA").textContent=scoreA;
+  document.getElementById("scoreB").textContent=scoreB;
+  document.getElementById("gA").textContent=scoreA;
+  document.getElementById("gB").textContent=scoreB;
+  document.getElementById("yellowA").textContent=yellowA;
+  document.getElementById("yellowB").textContent=yellowB;
+  document.getElementById("redA").textContent=redA;
+  document.getElementById("redB").textContent=redB;
 }
 
-function showOverlay(id){
-let o=document.getElementById(id);
-o.style.opacity=1;
-o.style.pointerEvents="auto";
+function show(id,duration=2000){
+  let o=document.getElementById(id);
+  o.style.opacity=1;
+  setTimeout(()=>o.style.opacity=0,duration);
 }
 
-function hideOverlay(id){
-let o=document.getElementById(id);
-o.style.opacity=0;
-o.style.pointerEvents="none";
+function getMinute(){
+  return Math.floor(seconds/60);
 }
 
 function addGoal(team){
-let player=prompt("Nom du joueur ?");
-let minute=Math.floor(seconds/60);
+  let player=prompt("Nom du joueur :");
+  if(!player) player="Buteur";
+  let minute=getMinute();
 
-if(!player || player.trim()===""){
-setTimeout(()=>{
-player = (team==="A") ? "Theo" : "Tom";
-},10000);
-player = (team==="A") ? "Theo" : "Tom";
+  if(team==="A"){
+    scoreA++;
+    document.getElementById("scorersA").innerHTML+="⚽ "+player+" "+minute+"'<br>";
+  }else{
+    scoreB++;
+    document.getElementById("scorersB").innerHTML+="⚽ "+player+" "+minute+"'<br>";
+  }
+
+  document.getElementById("goalOverlay").innerHTML=
+    "GOOOOAL ⚽<br>"+player+" "+minute+"'";
+
+  show("goalOverlay");
+  update();
 }
 
-if(team==="A"){
-scoreA++;
-document.getElementById("scorersA").innerHTML += "⚽ "+player+" "+minute+"'<br>";
-}else{
-scoreB++;
-document.getElementById("scorersB").innerHTML += "⚽ "+player+" "+minute+"'<br>";
-}
+function addPenalty(team){
+  show("varOverlay",2000);
 
-document.getElementById("goalOverlay").innerHTML="GOOOOAL ⚽<br>"+player+" "+minute+"'";
-showOverlay("goalOverlay");
-setTimeout(()=>hideOverlay("goalOverlay"),2000);
+  setTimeout(()=>{
+    let confirmed=confirm("Penalty confirmé ?");
+    if(!confirmed) return;
 
-update();
+    let player=prompt("Nom du tireur :");
+    if(!player) player="Tireur";
+
+    let scored=confirm("But marqué ? OK = BUT / Annuler = RATÉ");
+    let minute=getMinute();
+
+    if(scored){
+      if(team==="A"){
+        scoreA++;
+        document.getElementById("scorersA").innerHTML+="⚽ (P) "+player+" "+minute+"'<br>";
+      }else{
+        scoreB++;
+        document.getElementById("scorersB").innerHTML+="⚽ (P) "+player+" "+minute+"'<br>";
+      }
+      show("penaltyOverlay");
+    }else{
+      if(team==="A"){
+        document.getElementById("scorersA").innerHTML+="<span style='color:red'>🚫⚽ "+player+" "+minute+"'</span><br>";
+      }else{
+        document.getElementById("scorersB").innerHTML+="<span style='color:red'>🚫⚽ "+player+" "+minute+"'</span><br>";
+      }
+      document.getElementById("missOverlay").innerHTML=
+        "PENALTY RATÉ ❌<br>"+player+" "+minute+"'";
+      show("missOverlay",2500);
+    }
+    update();
+  },2000);
 }
 
 function addYellow(team){
-if(team==="A") yellowA++; else yellowB++;
-update();
+  if(team==="A") yellowA++;
+  else yellowB++;
+  update();
 }
 
 function addRed(team){
-if(team==="A") redA++; else redB++;
-update();
+  if(team==="A") redA++;
+  else redB++;
+  show("redOverlay",2500);
+  update();
 }
 
 function startTimer(){
-if(timer) return;
-halfDuration=parseInt(document.getElementById("halfDuration").value);
+  if(timer) return;
 
-timer=setInterval(()=>{
-seconds++;
-let m=Math.floor(seconds/60);
-let s=seconds%60;
-document.getElementById("timeDisplay").textContent=
-m+":"+String(s).padStart(2,"0");
+  halfTimeDuration=parseInt(document.getElementById("halfDuration").value);
 
-if(period===1 && m===halfDuration){
-pauseTimer();
-let w=document.getElementById("whistle");
-w.play(); setTimeout(()=>w.play(),400);
-showOverlay("halfOverlay");
-pausedForHalf=true;
-}
+  timer=setInterval(()=>{
+    seconds++;
+    let minute=Math.floor(seconds/60);
+    let sec=seconds%60;
 
-if(period===2 && m===halfDuration*2){
-pauseTimer();
-let w=document.getElementById("whistle");
-w.play(); setTimeout(()=>w.play(),400);
-setTimeout(()=>w.play(),800);
-showOverlay("endOverlay");
-}
+    document.getElementById("timeDisplay").textContent=
+      minute+":"+String(sec).padStart(2,"00");
 
-},1000);
+    if(period===1 && minute===halfTimeDuration){
+      let whistle = document.getElementById("whistleSound");
+      whistle.play();
+      setTimeout(()=>whistle.play(),400);
+      pauseTimer();
+      document.getElementById("status").textContent="Mi-Temps";
+      show("halfOverlay",3000);
+      period=2;
+      return;
+    }
+
+    if(period===2 && minute===halfTimeDuration*2){
+      let whistle = document.getElementById("whistleSound");
+      whistle.play();
+      setTimeout(()=>whistle.play(),400);
+      setTimeout(()=>whistle.play(),800);
+      pauseTimer();
+      document.getElementById("status").textContent="Fin du Match";
+      show("endOverlay",4000);
+      return;
+    }
+  },1000);
 }
 
 function pauseTimer(){
-clearInterval(timer);
-timer=null;
+  clearInterval(timer);
+  timer=null;
 }
 
 function resetAll(){
-pauseTimer();
-scoreA=scoreB=yellowA=yellowB=redA=redB=0;
-seconds=0;
-period=1;
-document.getElementById("scorersA").innerHTML="";
-document.getElementById("scorersB").innerHTML="";
-document.getElementById("timeDisplay").textContent="00:00";
-hideOverlay("halfOverlay");
-hideOverlay("endOverlay");
-update();
-}
+  pauseTimer();
+  scoreA=0; scoreB=0;
+  yellowA=0; yellowB=0;
+  redA=0; redB=0;
+  seconds=0;
+  period=1;
 
-document.getElementById("halfOverlay").onclick=function(){
-hideOverlay("halfOverlay");
-period=2;
-startTimer();
-}
+  document.getElementById("scorersA").innerHTML="";
+  document.getElementById("scorersB").innerHTML="";
+  document.getElementById("timeDisplay").textContent="00:00";
+  document.getElementById("status").textContent="Avant Match";
 
-document.getElementById("endOverlay").onclick=function(){
-hideOverlay("endOverlay");
+  update();
 }
 
 update();
