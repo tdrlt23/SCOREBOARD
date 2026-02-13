@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8">
-<title>Scoreboard drlt23 </title>
+<title>Scoreboard PRO</title>
 
 <style>
 body{
@@ -21,30 +21,16 @@ body{
   padding:15px;
 }
 
-.timer{
-  font-size:34px;
-  font-weight:bold;
-}
-
-.status{
-  margin-top:5px;
-}
-
 button{
-  margin:8px;
-  padding:14px 22px;
+  margin:6px;
+  padding:12px 18px;
+  font-size:18px;
   font-weight:bold;
-  font-size:20px;
   border:none;
   border-radius:10px;
   cursor:pointer;
   background:linear-gradient(45deg,#ffcc00,#ff9900);
   color:black;
-  box-shadow:0 4px 12px rgba(0,0,0,0.4);
-}
-
-button:hover{
-  transform:scale(1.05);
 }
 
 .main{
@@ -59,7 +45,7 @@ button:hover{
 }
 
 .team-name{
-  font-size:28px;
+  font-size:30px;
   font-weight:bold;
 }
 
@@ -68,22 +54,14 @@ button:hover{
   font-weight:900;
 }
 
+.cards{
+  font-size:28px;
+}
+
 .scorers{
   margin-top:10px;
-  font-size:16px;
+  min-height:120px;
   text-align:left;
-  min-height:100px;
-}
-
-.cards {
-  margin-top:8px;
-  font-size:26px;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-.cards span {
-  font-size:28px;
-  color:white;
 }
 
 .center{
@@ -92,7 +70,7 @@ button:hover{
 }
 
 .global-score{
-  font-size:100px;
+  font-size:110px;
   font-weight:900;
 }
 
@@ -109,239 +87,226 @@ button:hover{
   font-weight:900;
   opacity:0;
   pointer-events:none;
-  transition:0.4s;
+  transition:0.3s;
   text-align:center;
 }
 
 .goal{background:radial-gradient(circle,red,darkred);}
-.penalty{background:radial-gradient(circle,gold,orange);}
-.miss{background:black;}
-.red{background:darkred;}
-.var{background:black;}
+.half{background:black;}
 .end{background:black;}
+.red{background:darkred; animation: redCard 2s ease-in-out;}
+
+@keyframes redCard {
+  0% { background:darkred; }
+  100% { background:black; }
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="topbar">
-  ⏱ <span id="timeDisplay">00:00</span>
-  <div class="status" id="status">Match</div>
-  <br>
-  Durée mi-temps (minutes) :
-  <input type="number" id="halfDuration" value="45" style="width:60px">
-  <br>
-  <button onclick="startTimer()">Start</button>
-  <button onclick="pauseTimer()">Pause</button>
-  <button onclick="resetAll()">RESET TOTAL</button>
+⏱ <span id="timeDisplay">00:00</span><br>
+Durée mi-temps :
+<input type="number" id="halfDuration" value="45" style="width:60px">
+<br>
+<button onclick="startTimer()">START</button>
+<button onclick="pauseTimer()">PAUSE</button>
+<button onclick="resetAll()">RESET</button>
 </div>
 
 <div class="main">
 
-  <div class="team">
-    <div class="team-name" contenteditable="true">ÉQUIPE DOMICILE</div>
-    <div class="team-score" id="scoreA">0</div>
-    <div class="cards">
-      <span style="color: yellow;">🟨</span> <span id="yellowA">0</span> |
-      <span style="color: red;">🟥</span> <span id="redA">0</span>
-    </div>
-    <div class="scorers" id="scorersA"></div>
-    <button onclick="addGoal('A')">+ But</button>
-    <button onclick="addPenalty('A')">+ Penalty</button>
-    <button onclick="addYellow('A')">+ Jaune</button>
-    <button onclick="addRed('A')">+ Rouge</button>
-  </div>
+<div class="team">
+<div class="team-name">Theo</div>
+<div class="team-score" id="scoreA">0</div>
+<div class="cards">🟨 <span id="yellowA">0</span> | 🟥 <span id="redA">0</span></div>
+<div class="scorers" id="scorersA"></div>
+<button onclick="addGoal('A')">+ BUT</button>
+<button onclick="addYellow('A')">+ JAUNE</button>
+<button onclick="addRed('A')">+ ROUGE</button>
+</div>
 
-  <div class="center">
-    <div class="global-score">
-      <span id="gA">0</span> - <span id="gB">0</span>
-    </div>
-  </div>
+<div class="center">
+<div class="global-score">
+<span id="gA">0</span> - <span id="gB">0</span>
+</div>
+</div>
 
-  <div class="team">
-    <div class="team-name" contenteditable="true">ÉQUIPE VISITEUR</div>
-    <div class="team-score" id="scoreB">0</div>
-    <div class="cards">
-      <span style="color: yellow;">🟨</span> <span id="yellowB">0</span> |
-      <span style="color: red;">🟥</span> <span id="redB">0</span>
-    </div>
-    <div class="scorers" id="scorersB"></div>
-    <button onclick="addGoal('B')">+ But</button>
-    <button onclick="addPenalty('B')">+ Penalty</button>
-    <button onclick="addYellow('B')">+ Jaune</button>
-    <button onclick="addRed('B')">+ Rouge</button>
-  </div>
+<div class="team">
+<div class="team-name">Tom</div>
+<div class="team-score" id="scoreB">0</div>
+<div class="cards">🟨 <span id="yellowB">0</span> | 🟥 <span id="redB">0</span></div>
+<div class="scorers" id="scorersB"></div>
+<button onclick="addGoal('B')">+ BUT</button>
+<button onclick="addYellow('B')">+ JAUNE</button>
+<button onclick="addRed('B')">+ ROUGE</button>
+</div>
 
 </div>
 
 <!-- OVERLAYS -->
 <div class="overlay goal" id="goalOverlay"></div>
-<div class="overlay penalty" id="penaltyOverlay">PENALTY ⚽</div>
-<div class="overlay miss" id="missOverlay"></div>
-<div class="overlay red" id="redOverlay">CARTON ROUGE 🟥</div>
-<div class="overlay var" id="varOverlay">VAR EN COURS...</div>
-<div class="overlay var" id="halfOverlay">MI-TEMPS</div>
-<div class="overlay end" id="endOverlay">FIN DU MATCH</div>
+<div class="overlay half" id="halfOverlay">MI-TEMPS<br><small>Touchez l'écran</small></div>
+<div class="overlay end" id="endOverlay">FIN DU MATCH<br><small>Touchez l'écran</small></div>
+<div class="overlay" id="extraTimeOverlay">Temps additionnel : <span id="extraTimeDisplay">0</span> min</div>
 
-<!-- Son uniquement sifflets -->
-<audio id="whistleSound" src="https://actions.google.com/sounds/v1/sports/referee_whistle.ogg"></audio>
+<audio id="whistle" src="https://actions.google.com/sounds/v1/sports/referee_whistle.ogg"></audio>
 
 <script>
 
-let scoreA=0,scoreB=0;
-let yellowA=0,yellowB=0;
-let redA=0,redB=0;
-let seconds=0;
-let timer=null;
-let halfTimeDuration=45;
-let period=1;
+// Variables
+let scoreA = 0, scoreB = 0;
+let yellowA = 0, yellowB = 0;
+let redA = 0, redB = 0;
+let seconds = 0;
+let timer = null;
+let halfDuration = 45;
+let period = 1;
+let addedTime = 0;  // Temps additionnel
+let goalsBeforeHalf = 0; // Nombre de buts avant la mi-temps
+let pausedForHalf = false;
 
-function update(){
-  document.getElementById("scoreA").textContent=scoreA;
-  document.getElementById("scoreB").textContent=scoreB;
-  document.getElementById("gA").textContent=scoreA;
-  document.getElementById("gB").textContent=scoreB;
-  document.getElementById("yellowA").textContent=yellowA;
-  document.getElementById("yellowB").textContent=yellowB;
-  document.getElementById("redA").textContent=redA;
-  document.getElementById("redB").textContent=redB;
+function update() {
+    document.getElementById("scoreA").textContent = scoreA;
+    document.getElementById("scoreB").textContent = scoreB;
+    document.getElementById("gA").textContent = scoreA;
+    document.getElementById("gB").textContent = scoreB;
+    document.getElementById("yellowA").textContent = yellowA;
+    document.getElementById("yellowB").textContent = yellowB;
+    document.getElementById("redA").textContent = redA;
+    document.getElementById("redB").textContent = redB;
 }
 
-function show(id,duration=2000){
-  let o=document.getElementById(id);
-  o.style.opacity=1;
-  setTimeout(()=>o.style.opacity=0,duration);
+// Afficher l'overlay (e.g. goal, mi-temps, etc.)
+function showOverlay(id) {
+    let o = document.getElementById(id);
+    o.style.opacity = 1;
+    o.style.pointerEvents = "auto";
 }
 
-function getMinute(){
-  return Math.floor(seconds/60);
+// Cacher l'overlay
+function hideOverlay(id) {
+    let o = document.getElementById(id);
+    o.style.opacity = 0;
+    o.style.pointerEvents = "none";
 }
 
-function addGoal(team){
-  let player=prompt("Nom du joueur :");
-  if(!player) player="Buteur";
-  let minute=getMinute();
+// Ajouter un but
+function addGoal(team) {
+    let player = prompt("Nom du joueur ?");
+    let minute = Math.floor(seconds / 60);
 
-  if(team==="A"){
-    scoreA++;
-    document.getElementById("scorersA").innerHTML+="⚽ "+player+" "+minute+"'<br>";
-  }else{
-    scoreB++;
-    document.getElementById("scorersB").innerHTML+="⚽ "+player+" "+minute+"'<br>";
-  }
+    if (!player || player.trim() === "") {
+        setTimeout(() => {
+            player = (team === "A") ? "Theo" : "Tom";
+        }, 10000);
+        player = (team === "A") ? "Theo" : "Tom";
+    }
 
-  document.getElementById("goalOverlay").innerHTML=
-    "GOOOOAL ⚽<br>"+player+" "+minute+"'";
-
-  show("goalOverlay");
-  update();
-}
-
-function addPenalty(team){
-  show("varOverlay",2000);
-
-  setTimeout(()=>{
-    let confirmed=confirm("Penalty confirmé ?");
-    if(!confirmed) return;
-
-    let player=prompt("Nom du tireur :");
-    if(!player) player="Tireur";
-
-    let scored=confirm("But marqué ? OK = BUT / Annuler = RATÉ");
-    let minute=getMinute();
-
-    if(scored){
-      if(team==="A"){
+    if (team === "A") {
         scoreA++;
-        document.getElementById("scorersA").innerHTML+="⚽ (P) "+player+" "+minute+"'<br>";
-      }else{
+        document.getElementById("scorersA").innerHTML += "⚽ " + player + " " + minute + "'<br>";
+    } else {
         scoreB++;
-        document.getElementById("scorersB").innerHTML+="⚽ (P) "+player+" "+minute+"'<br>";
-      }
-      show("penaltyOverlay");
-    }else{
-      if(team==="A"){
-        document.getElementById("scorersA").innerHTML+="<span style='color:red'>🚫⚽ "+player+" "+minute+"'</span><br>";
-      }else{
-        document.getElementById("scorersB").innerHTML+="<span style='color:red'>🚫⚽ "+player+" "+minute+"'</span><br>";
-      }
-      document.getElementById("missOverlay").innerHTML=
-        "PENALTY RATÉ ❌<br>"+player+" "+minute+"'";
-      show("missOverlay",2500);
+        document.getElementById("scorersB").innerHTML += "⚽ " + player + " " + minute + "'<br>";
     }
+
+    document.getElementById("goalOverlay").innerHTML = "GOOOOAL ⚽<br>" + player + " " + minute + "'";
+    showOverlay("goalOverlay");
+    setTimeout(() => hideOverlay("goalOverlay"), 2000);
+
+    // Compter les buts avant la mi-temps pour ajouter le temps additionnel
+    if (Math.floor(seconds / 60) < halfDuration) {
+        goalsBeforeHalf++;
+        addedTime += 5;  // Ajouter 5 secondes pour chaque but avant la mi-temps
+    }
+
     update();
-  },2000);
 }
 
-function addYellow(team){
-  if(team==="A") yellowA++;
-  else yellowB++;
-  update();
+// Ajouter un carton jaune
+function addYellow(team) {
+    if (team === "A") yellowA++; else yellowB++;
+    update();
 }
 
-function addRed(team){
-  if(team==="A") redA++;
-  else redB++;
-  show("redOverlay",2500);
-  update();
+// Ajouter un carton rouge
+function addRed(team) {
+    if (team === "A") redA++; else redB++;
+    showOverlay("redOverlay");
+    setTimeout(() => hideOverlay("redOverlay"), 2500);
+    update();
 }
 
-function startTimer(){
-  if(timer) return;
+// Démarrer le timer
+function startTimer() {
+    if (timer) return;
+    halfDuration = parseInt(document.getElementById("halfDuration").value);
 
-  halfTimeDuration=parseInt(document.getElementById("halfDuration").value);
+    timer = setInterval(() => {
+        seconds++;
+        let m = Math.floor((seconds + addedTime) / 60);
+        let s = (seconds + addedTime) % 60;
+        document.getElementById("timeDisplay").textContent = m + ":" + String(s).padStart(2, "0");
 
-  timer=setInterval(()=>{
-    seconds++;
-    let minute=Math.floor(seconds/60);
-    let sec=seconds%60;
+        // Mi-temps
+        if (period === 1 && m === halfDuration) {
+            pauseTimer();
+            let w = document.getElementById("whistle");
+            w.play(); setTimeout(() => w.play(), 400);
+            showOverlay("halfOverlay");
+            pausedForHalf = true;
+        }
 
-    document.getElementById("timeDisplay").textContent=
-      minute+":"+String(sec).padStart(2,"00");
+        // Fin du match
+        if (period === 2 && m === halfDuration * 2) {
+            pauseTimer();
+            let w = document.getElementById("whistle");
+            w.play(); setTimeout(() => w.play(), 400);
+            setTimeout(() => w.play(), 800);
+            showOverlay("endOverlay");
+            document.getElementById("extraTimeDisplay").textContent = addedTime / 60;  // Afficher le temps additionnel
+            showOverlay("extraTimeOverlay");
+        }
 
-    if(period===1 && minute===halfTimeDuration){
-      let whistle = document.getElementById("whistleSound");
-      whistle.play();
-      setTimeout(()=>whistle.play(),400);
-      pauseTimer();
-      document.getElementById("status").textContent="Mi-Temps";
-      show("halfOverlay",3000);
-      period=2;
-      return;
-    }
-
-    if(period===2 && minute===halfTimeDuration*2){
-      let whistle = document.getElementById("whistleSound");
-      whistle.play();
-      setTimeout(()=>whistle.play(),400);
-      setTimeout(()=>whistle.play(),800);
-      pauseTimer();
-      document.getElementById("status").textContent="Fin du Match";
-      show("endOverlay",4000);
-      return;
-    }
-  },1000);
+    }, 1000);
 }
 
-function pauseTimer(){
-  clearInterval(timer);
-  timer=null;
+// Mettre en pause le timer
+function pauseTimer() {
+    clearInterval(timer);
+    timer = null;
 }
 
-function resetAll(){
-  pauseTimer();
-  scoreA=0; scoreB=0;
-  yellowA=0; yellowB=0;
-  redA=0; redB=0;
-  seconds=0;
-  period=1;
+// Réinitialiser le score et tout
+function resetAll() {
+    pauseTimer();
+    scoreA = scoreB = yellowA = yellowB = redA = redB = 0;
+    seconds = 0;
+    addedTime = 0;
+    goalsBeforeHalf = 0;
+    period = 1;
+    document.getElementById("scorersA").innerHTML = "";
+    document.getElementById("scorersB").innerHTML = "";
+    document.getElementById("timeDisplay").textContent = "00:00";
+    hideOverlay("halfOverlay");
+    hideOverlay("endOverlay");
+    hideOverlay("extraTimeOverlay");
+    update();
+}
 
-  document.getElementById("scorersA").innerHTML="";
-  document.getElementById("scorersB").innerHTML="";
-  document.getElementById("timeDisplay").textContent="00:00";
-  document.getElementById("status").textContent="Avant Match";
+// Interaction pour mi-temps
+document.getElementById("halfOverlay").onclick = function () {
+    hideOverlay("halfOverlay");
+    period = 2;
+    startTimer();
+}
 
-  update();
+// Interaction pour fin du match
+document.getElementById("endOverlay").onclick = function () {
+    hideOverlay("endOverlay");
 }
 
 update();
