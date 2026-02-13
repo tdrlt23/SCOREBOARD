@@ -94,13 +94,6 @@ button{
 .goal{background:radial-gradient(circle,red,darkred);}
 .half{background:black;}
 .end{background:black;}
-.red{background:darkred; animation: redCard 2s ease-in-out;}
-
-@keyframes redCard {
-  0% { background:darkred; }
-  100% { background:black; }
-}
-
 </style>
 </head>
 
@@ -146,167 +139,138 @@ Durée mi-temps :
 
 </div>
 
-<!-- OVERLAYS -->
 <div class="overlay goal" id="goalOverlay"></div>
 <div class="overlay half" id="halfOverlay">MI-TEMPS<br><small>Touchez l'écran</small></div>
 <div class="overlay end" id="endOverlay">FIN DU MATCH<br><small>Touchez l'écran</small></div>
-<div class="overlay" id="extraTimeOverlay">Temps additionnel : <span id="extraTimeDisplay">0</span> min</div>
 
 <audio id="whistle" src="https://actions.google.com/sounds/v1/sports/referee_whistle.ogg"></audio>
 
 <script>
 
-// Variables
-let scoreA = 0, scoreB = 0;
-let yellowA = 0, yellowB = 0;
-let redA = 0, redB = 0;
-let seconds = 0;
-let timer = null;
-let halfDuration = 45;
-let period = 1;
-let addedTime = 0;  // Temps additionnel
-let goalsBeforeHalf = 0; // Nombre de buts avant la mi-temps
-let pausedForHalf = false;
+let scoreA=0, scoreB=0;
+let yellowA=0, yellowB=0;
+let redA=0, redB=0;
+let seconds=0;
+let timer=null;
+let halfDuration=45;
+let period=1;
+let pausedForHalf=false;
 
-function update() {
-    document.getElementById("scoreA").textContent = scoreA;
-    document.getElementById("scoreB").textContent = scoreB;
-    document.getElementById("gA").textContent = scoreA;
-    document.getElementById("gB").textContent = scoreB;
-    document.getElementById("yellowA").textContent = yellowA;
-    document.getElementById("yellowB").textContent = yellowB;
-    document.getElementById("redA").textContent = redA;
-    document.getElementById("redB").textContent = redB;
+function update(){
+document.getElementById("scoreA").textContent=scoreA;
+document.getElementById("scoreB").textContent=scoreB;
+document.getElementById("gA").textContent=scoreA;
+document.getElementById("gB").textContent=scoreB;
+document.getElementById("yellowA").textContent=yellowA;
+document.getElementById("yellowB").textContent=yellowB;
+document.getElementById("redA").textContent=redA;
+document.getElementById("redB").textContent=redB;
 }
 
-// Afficher l'overlay (e.g. goal, mi-temps, etc.)
-function showOverlay(id) {
-    let o = document.getElementById(id);
-    o.style.opacity = 1;
-    o.style.pointerEvents = "auto";
+function showOverlay(id){
+let o=document.getElementById(id);
+o.style.opacity=1;
+o.style.pointerEvents="auto";
 }
 
-// Cacher l'overlay
-function hideOverlay(id) {
-    let o = document.getElementById(id);
-    o.style.opacity = 0;
-    o.style.pointerEvents = "none";
+function hideOverlay(id){
+let o=document.getElementById(id);
+o.style.opacity=0;
+o.style.pointerEvents="none";
 }
 
-// Ajouter un but
-function addGoal(team) {
-    let player = prompt("Nom du joueur ?");
-    let minute = Math.floor(seconds / 60);
+function addGoal(team){
+let player=prompt("Nom du joueur ?");
+let minute=Math.floor(seconds/60);
 
-    if (!player || player.trim() === "") {
-        setTimeout(() => {
-            player = (team === "A") ? "Theo" : "Tom";
-        }, 10000);
-        player = (team === "A") ? "Theo" : "Tom";
-    }
-
-    if (team === "A") {
-        scoreA++;
-        document.getElementById("scorersA").innerHTML += "⚽ " + player + " " + minute + "'<br>";
-    } else {
-        scoreB++;
-        document.getElementById("scorersB").innerHTML += "⚽ " + player + " " + minute + "'<br>";
-    }
-
-    document.getElementById("goalOverlay").innerHTML = "GOOOOAL ⚽<br>" + player + " " + minute + "'";
-    showOverlay("goalOverlay");
-    setTimeout(() => hideOverlay("goalOverlay"), 2000);
-
-    // Compter les buts avant la mi-temps pour ajouter le temps additionnel
-    if (Math.floor(seconds / 60) < halfDuration) {
-        goalsBeforeHalf++;
-        addedTime += 5;  // Ajouter 5 secondes pour chaque but avant la mi-temps
-    }
-
-    update();
+if(!player || player.trim()===""){
+setTimeout(()=>{
+player = (team==="A") ? "Theo" : "Tom";
+},10000);
+player = (team==="A") ? "Theo" : "Tom";
 }
 
-// Ajouter un carton jaune
-function addYellow(team) {
-    if (team === "A") yellowA++; else yellowB++;
-    update();
+if(team==="A"){
+scoreA++;
+document.getElementById("scorersA").innerHTML += "⚽ "+player+" "+minute+"'<br>";
+}else{
+scoreB++;
+document.getElementById("scorersB").innerHTML += "⚽ "+player+" "+minute+"'<br>";
 }
 
-// Ajouter un carton rouge
-function addRed(team) {
-    if (team === "A") redA++; else redB++;
-    showOverlay("redOverlay");
-    setTimeout(() => hideOverlay("redOverlay"), 2500);
-    update();
+document.getElementById("goalOverlay").innerHTML="GOOOOAL ⚽<br>"+player+" "+minute+"'";
+showOverlay("goalOverlay");
+setTimeout(()=>hideOverlay("goalOverlay"),2000);
+
+update();
 }
 
-// Démarrer le timer
-function startTimer() {
-    if (timer) return;
-    halfDuration = parseInt(document.getElementById("halfDuration").value);
-
-    timer = setInterval(() => {
-        seconds++;
-        let m = Math.floor((seconds + addedTime) / 60);
-        let s = (seconds + addedTime) % 60;
-        document.getElementById("timeDisplay").textContent = m + ":" + String(s).padStart(2, "0");
-
-        // Mi-temps
-        if (period === 1 && m === halfDuration) {
-            pauseTimer();
-            let w = document.getElementById("whistle");
-            w.play(); setTimeout(() => w.play(), 400);
-            showOverlay("halfOverlay");
-            pausedForHalf = true;
-        }
-
-        // Fin du match
-        if (period === 2 && m === halfDuration * 2) {
-            pauseTimer();
-            let w = document.getElementById("whistle");
-            w.play(); setTimeout(() => w.play(), 400);
-            setTimeout(() => w.play(), 800);
-            showOverlay("endOverlay");
-            document.getElementById("extraTimeDisplay").textContent = addedTime / 60;  // Afficher le temps additionnel
-            showOverlay("extraTimeOverlay");
-        }
-
-    }, 1000);
+function addYellow(team){
+if(team==="A") yellowA++; else yellowB++;
+update();
 }
 
-// Mettre en pause le timer
-function pauseTimer() {
-    clearInterval(timer);
-    timer = null;
+function addRed(team){
+if(team==="A") redA++; else redB++;
+update();
 }
 
-// Réinitialiser le score et tout
-function resetAll() {
-    pauseTimer();
-    scoreA = scoreB = yellowA = yellowB = redA = redB = 0;
-    seconds = 0;
-    addedTime = 0;
-    goalsBeforeHalf = 0;
-    period = 1;
-    document.getElementById("scorersA").innerHTML = "";
-    document.getElementById("scorersB").innerHTML = "";
-    document.getElementById("timeDisplay").textContent = "00:00";
-    hideOverlay("halfOverlay");
-    hideOverlay("endOverlay");
-    hideOverlay("extraTimeOverlay");
-    update();
+function startTimer(){
+if(timer) return;
+halfDuration=parseInt(document.getElementById("halfDuration").value);
+
+timer=setInterval(()=>{
+seconds++;
+let m=Math.floor(seconds/60);
+let s=seconds%60;
+document.getElementById("timeDisplay").textContent=
+m+":"+String(s).padStart(2,"0");
+
+if(period===1 && m===halfDuration){
+pauseTimer();
+let w=document.getElementById("whistle");
+w.play(); setTimeout(()=>w.play(),400);
+showOverlay("halfOverlay");
+pausedForHalf=true;
 }
 
-// Interaction pour mi-temps
-document.getElementById("halfOverlay").onclick = function () {
-    hideOverlay("halfOverlay");
-    period = 2;
-    startTimer();
+if(period===2 && m===halfDuration*2){
+pauseTimer();
+let w=document.getElementById("whistle");
+w.play(); setTimeout(()=>w.play(),400);
+setTimeout(()=>w.play(),800);
+showOverlay("endOverlay");
 }
 
-// Interaction pour fin du match
-document.getElementById("endOverlay").onclick = function () {
-    hideOverlay("endOverlay");
+},1000);
+}
+
+function pauseTimer(){
+clearInterval(timer);
+timer=null;
+}
+
+function resetAll(){
+pauseTimer();
+scoreA=scoreB=yellowA=yellowB=redA=redB=0;
+seconds=0;
+period=1;
+document.getElementById("scorersA").innerHTML="";
+document.getElementById("scorersB").innerHTML="";
+document.getElementById("timeDisplay").textContent="00:00";
+hideOverlay("halfOverlay");
+hideOverlay("endOverlay");
+update();
+}
+
+document.getElementById("halfOverlay").onclick=function(){
+hideOverlay("halfOverlay");
+period=2;
+startTimer();
+}
+
+document.getElementById("endOverlay").onclick=function(){
+hideOverlay("endOverlay");
 }
 
 update();
