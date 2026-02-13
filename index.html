@@ -75,9 +75,15 @@ button:hover{
   min-height:100px;
 }
 
-.cards{
+.cards {
   margin-top:8px;
-  font-size:22px;
+  font-size:26px;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.cards span {
+  font-size: 28px;
+  color: white;
 }
 
 .center{
@@ -136,7 +142,10 @@ button:hover{
 <div class="team">
   <div class="team-name" contenteditable="true">ÉQUIPE DOMICILE</div>
   <div class="team-score" id="scoreA">0</div>
-  <div class="cards">🟨 <span id="yellowA">0</span> 🟥 <span id="redA">0</span></div>
+  <div class="cards">
+    <span style="color: yellow;">🟨</span> <span id="yellowA">0</span> |
+    <span style="color: red;">🟥</span> <span id="redA">0</span>
+  </div>
   <div class="scorers" id="scorersA"></div>
   <button onclick="addGoal('A')">+ But</button>
   <button onclick="addPenalty('A')">+ Penalty</button>
@@ -153,7 +162,10 @@ button:hover{
 <div class="team">
   <div class="team-name" contenteditable="true">ÉQUIPE VISITEUR</div>
   <div class="team-score" id="scoreB">0</div>
-  <div class="cards">🟨 <span id="yellowB">0</span> 🟥 <span id="redB">0</span></div>
+  <div class="cards">
+    <span style="color: yellow;">🟨</span> <span id="yellowB">0</span> |
+    <span style="color: red;">🟥</span> <span id="redB">0</span>
+  </div>
   <div class="scorers" id="scorersB"></div>
   <button onclick="addGoal('B')">+ But</button>
   <button onclick="addPenalty('B')">+ Penalty</button>
