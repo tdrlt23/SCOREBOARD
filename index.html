@@ -8,7 +8,10 @@
 body{
   margin:0;
   font-family:Arial;
-  background:radial-gradient(circle at center,#0a1f44 0%,#000814 70%);
+  background:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), /* filtre sombre pour améliorer la lisibilité */
+    url("fond.jpg") no-repeat center center fixed; /* Image de fond */
+  background-size: cover; /* Adapter l'image */
   color:white;
   overflow:hidden;
 }
@@ -175,6 +178,7 @@ button:hover{
 
 </div>
 
+<!-- OVERLAYS -->
 <div class="overlay goal" id="goalOverlay"></div>
 <div class="overlay penalty" id="penaltyOverlay">PENALTY ⚽</div>
 <div class="overlay miss" id="missOverlay"></div>
@@ -182,6 +186,12 @@ button:hover{
 <div class="overlay var" id="varOverlay">VAR EN COURS...</div>
 <div class="overlay var" id="halfOverlay">MI-TEMPS</div>
 <div class="overlay end" id="endOverlay">FIN DU MATCH</div>
+
+<!-- SONS -->
+<audio id="goalSound" src="https://actions.google.com/sounds/v1/crowds/cheer.ogg"></audio>
+<audio id="cardSound" src="https://www.soundjay.com/button/beep-04.wav" preload="auto"></audio>
+<audio id="whistleSound" src="https://actions.google.com/sounds/v1/sports/referee_whistle.ogg"></audio>
+<audio id="goalCrowdSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
 <script>
 
@@ -220,6 +230,9 @@ function addGoal(team){
   let player=prompt("Nom du joueur :");
   if(!player) player="Buteur";
   let minute=getMinute();
+
+  // Joue le son du public qui crie GOAL
+  document.getElementById("goalCrowdSound").play();
 
   if(team==="A"){
     scoreA++;
@@ -277,12 +290,18 @@ function addPenalty(team){
 }
 
 function addYellow(team){
+  // Joue le son pour les cartons
+  document.getElementById("cardSound").play();
+  
   if(team==="A") yellowA++;
   else yellowB++;
   update();
 }
 
 function addRed(team){
+  // Joue le son pour les cartons
+  document.getElementById("cardSound").play();
+  
   if(team==="A") redA++;
   else redB++;
   show("redOverlay",2500);
@@ -303,6 +322,10 @@ function startTimer(){
       minute+":"+String(sec).padStart(2,"0");
 
     if(period===1 && minute===halfTimeDuration){
+      // Double sifflet mi-temps
+      let whistle = document.getElementById("whistleSound");
+      whistle.play();
+      setTimeout(()=>whistle.play(),400);
       pauseTimer();
       document.getElementById("status").textContent="Mi-Temps";
       show("halfOverlay",3000);
@@ -311,6 +334,11 @@ function startTimer(){
     }
 
     if(period===2 && minute===halfTimeDuration*2){
+      // Triple sifflet fin du match
+      let whistle = document.getElementById("whistleSound");
+      whistle.play();
+      setTimeout(()=>whistle.play(),400);
+      setTimeout(()=>whistle.play(),800);
       pauseTimer();
       document.getElementById("status").textContent="Fin du Match";
       show("endOverlay",4000);
