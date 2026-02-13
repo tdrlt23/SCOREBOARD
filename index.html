@@ -9,14 +9,13 @@ body{
   margin:0;
   font-family:Arial;
   background:
-    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), /* filtre sombre pour améliorer la lisibilité */
-    url("fond.jpg") no-repeat center center fixed; /* Image de fond */
-  background-size: cover; /* Adapter l'image */
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url("https://wallpaperaccess.com/full/1594761.jpg") no-repeat center center fixed;
+  background-size: cover;
   color:white;
   overflow:hidden;
 }
 
-/* TOP BAR */
 .topbar{
   text-align:center;
   padding:15px;
@@ -31,7 +30,6 @@ body{
   margin-top:5px;
 }
 
-/* BOUTONS FIX iPAD */
 button{
   margin:8px;
   padding:14px 22px;
@@ -49,7 +47,6 @@ button:hover{
   transform:scale(1.05);
 }
 
-/* LAYOUT */
 .main{
   display:flex;
   justify-content:space-between;
@@ -85,8 +82,8 @@ button:hover{
 }
 
 .cards span {
-  font-size: 28px;
-  color: white;
+  font-size:28px;
+  color:white;
 }
 
 .center{
@@ -99,7 +96,6 @@ button:hover{
   font-weight:900;
 }
 
-/* OVERLAYS */
 .overlay{
   position:fixed;
   top:0;
@@ -142,39 +138,39 @@ button:hover{
 
 <div class="main">
 
-<div class="team">
-  <div class="team-name" contenteditable="true">ÉQUIPE DOMICILE</div>
-  <div class="team-score" id="scoreA">0</div>
-  <div class="cards">
-    <span style="color: yellow;">🟨</span> <span id="yellowA">0</span> |
-    <span style="color: red;">🟥</span> <span id="redA">0</span>
+  <div class="team">
+    <div class="team-name" contenteditable="true">ÉQUIPE DOMICILE</div>
+    <div class="team-score" id="scoreA">0</div>
+    <div class="cards">
+      <span style="color: yellow;">🟨</span> <span id="yellowA">0</span> |
+      <span style="color: red;">🟥</span> <span id="redA">0</span>
+    </div>
+    <div class="scorers" id="scorersA"></div>
+    <button onclick="addGoal('A')">+ But</button>
+    <button onclick="addPenalty('A')">+ Penalty</button>
+    <button onclick="addYellow('A')">+ Jaune</button>
+    <button onclick="addRed('A')">+ Rouge</button>
   </div>
-  <div class="scorers" id="scorersA"></div>
-  <button onclick="addGoal('A')">+ But</button>
-  <button onclick="addPenalty('A')">+ Penalty</button>
-  <button onclick="addYellow('A')">+ Jaune</button>
-  <button onclick="addRed('A')">+ Rouge</button>
-</div>
 
-<div class="center">
-  <div class="global-score">
-    <span id="gA">0</span> - <span id="gB">0</span>
+  <div class="center">
+    <div class="global-score">
+      <span id="gA">0</span> - <span id="gB">0</span>
+    </div>
   </div>
-</div>
 
-<div class="team">
-  <div class="team-name" contenteditable="true">ÉQUIPE VISITEUR</div>
-  <div class="team-score" id="scoreB">0</div>
-  <div class="cards">
-    <span style="color: yellow;">🟨</span> <span id="yellowB">0</span> |
-    <span style="color: red;">🟥</span> <span id="redB">0</span>
+  <div class="team">
+    <div class="team-name" contenteditable="true">ÉQUIPE VISITEUR</div>
+    <div class="team-score" id="scoreB">0</div>
+    <div class="cards">
+      <span style="color: yellow;">🟨</span> <span id="yellowB">0</span> |
+      <span style="color: red;">🟥</span> <span id="redB">0</span>
+    </div>
+    <div class="scorers" id="scorersB"></div>
+    <button onclick="addGoal('B')">+ But</button>
+    <button onclick="addPenalty('B')">+ Penalty</button>
+    <button onclick="addYellow('B')">+ Jaune</button>
+    <button onclick="addRed('B')">+ Rouge</button>
   </div>
-  <div class="scorers" id="scorersB"></div>
-  <button onclick="addGoal('B')">+ But</button>
-  <button onclick="addPenalty('B')">+ Penalty</button>
-  <button onclick="addYellow('B')">+ Jaune</button>
-  <button onclick="addRed('B')">+ Rouge</button>
-</div>
 
 </div>
 
@@ -187,11 +183,8 @@ button:hover{
 <div class="overlay var" id="halfOverlay">MI-TEMPS</div>
 <div class="overlay end" id="endOverlay">FIN DU MATCH</div>
 
-<!-- SONS -->
-<audio id="goalSound" src="https://actions.google.com/sounds/v1/crowds/cheer.ogg"></audio>
-<audio id="cardSound" src="https://www.soundjay.com/button/beep-04.wav" preload="auto"></audio>
+<!-- Son uniquement sifflets -->
 <audio id="whistleSound" src="https://actions.google.com/sounds/v1/sports/referee_whistle.ogg"></audio>
-<audio id="goalCrowdSound" src="https://www.soundjay.com/button/beep-07.wav" preload="auto"></audio>
 
 <script>
 
@@ -204,8 +197,6 @@ let halfTimeDuration=45;
 let period=1;
 
 function update(){
-  scoreA=Math.max(0,scoreA);
-  scoreB=Math.max(0,scoreB);
   document.getElementById("scoreA").textContent=scoreA;
   document.getElementById("scoreB").textContent=scoreB;
   document.getElementById("gA").textContent=scoreA;
@@ -231,9 +222,6 @@ function addGoal(team){
   if(!player) player="Buteur";
   let minute=getMinute();
 
-  // Joue le son du public qui crie GOAL
-  document.getElementById("goalCrowdSound").play();
-
   if(team==="A"){
     scoreA++;
     document.getElementById("scorersA").innerHTML+="⚽ "+player+" "+minute+"'<br>";
@@ -250,11 +238,9 @@ function addGoal(team){
 }
 
 function addPenalty(team){
-
   show("varOverlay",2000);
 
   setTimeout(()=>{
-
     let confirmed=confirm("Penalty confirmé ?");
     if(!confirmed) return;
 
@@ -283,25 +269,17 @@ function addPenalty(team){
         "PENALTY RATÉ ❌<br>"+player+" "+minute+"'";
       show("missOverlay",2500);
     }
-
     update();
-
   },2000);
 }
 
 function addYellow(team){
-  // Joue le son pour les cartons
-  document.getElementById("cardSound").play();
-  
   if(team==="A") yellowA++;
   else yellowB++;
   update();
 }
 
 function addRed(team){
-  // Joue le son pour les cartons
-  document.getElementById("cardSound").play();
-  
   if(team==="A") redA++;
   else redB++;
   show("redOverlay",2500);
@@ -319,10 +297,9 @@ function startTimer(){
     let sec=seconds%60;
 
     document.getElementById("timeDisplay").textContent=
-      minute+":"+String(sec).padStart(2,"0");
+      minute+":"+String(sec).padStart(2,"00");
 
     if(period===1 && minute===halfTimeDuration){
-      // Double sifflet mi-temps
       let whistle = document.getElementById("whistleSound");
       whistle.play();
       setTimeout(()=>whistle.play(),400);
@@ -334,7 +311,6 @@ function startTimer(){
     }
 
     if(period===2 && minute===halfTimeDuration*2){
-      // Triple sifflet fin du match
       let whistle = document.getElementById("whistleSound");
       whistle.play();
       setTimeout(()=>whistle.play(),400);
@@ -344,7 +320,6 @@ function startTimer(){
       show("endOverlay",4000);
       return;
     }
-
   },1000);
 }
 
